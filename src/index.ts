@@ -96,11 +96,11 @@ var geometry = new THREE.PlaneGeometry(1, 1*.75);
 var mesh = new THREE.Mesh(geometry, material);
 
 // set the position of the image mesh in the x,y,z dimensions
-mesh.position.set(0,0,-1)
+mesh.position.set(0,0,0)
 
 // add the image to the scene
-scene.add(mesh);
-//imageTrackerGroup.add(mesh.scene);
+//scene.add(mesh);
+imageTrackerGroup.add(mesh);
 
 
 /*
@@ -126,8 +126,6 @@ gltfLoader.load(model, (gltf) => {
 });
 */
 
-
-// Light up our scene with an ambient light
 imageTrackerGroup.add(new THREE.AmbientLight(0xffffff));
 
 // Create a new div element on the document
@@ -140,6 +138,8 @@ button.onclick = () => { action.play(); };
 
 // Append the button to our document's body
 document.body.appendChild(button);
+
+
 
 // When we lose sight of the camera, hide the scene contents.
 imageTracker.onVisible.bind(() => { scene.visible = true; });
