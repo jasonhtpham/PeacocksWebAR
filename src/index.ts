@@ -7,8 +7,8 @@
 import * as ZapparThree from '@zappar/zappar-threejs';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import model from '../assets/waving.glb';
-import target from '../assets/sample2.zpt';
+import model from '../assets/3.png';
+import target from '../assets/sample.zpt';
 import './index.sass';
 
 // The SDK is supported on many different browsers, but there are some that
@@ -79,19 +79,53 @@ scene.add(imageTrackerGroup);
 let action: THREE.AnimationAction;
 let mixer: THREE.AnimationMixer;
 
+var loader = new THREE.TextureLoader();
+
+// Load an image file into a custom material
+var material = new THREE.MeshLambertMaterial({
+  map: 
+  loader.load('https://s3.amazonaws.com/duhaime/blog/tsne-webgl/assets/cat.jpg'),
+  transparent:true
+});
+
+// create a plane geometry for the image with a width of 10
+// and a height that preserves the image's aspect ratio
+var geometry = new THREE.PlaneGeometry(1, 1*.75);
+
+// combine our image geometry and material into a mesh
+var mesh = new THREE.Mesh(geometry, material);
+
+// set the position of the image mesh in the x,y,z dimensions
+mesh.position.set(0,0,-1)
+
+// add the image to the scene
+scene.add(mesh);
+//imageTrackerGroup.add(mesh.scene);
+
+
+/*
+//GLB files
 // Load a 3D model to place within our group (using ThreeJS's GLTF loader)
 const gltfLoader = new GLTFLoader(manager);
 gltfLoader.load(model, (gltf) => {
-  // get the animation and re-declare mixer and action.
+
+  // Position the loaded content to overlay user's face
+  gltf.scene.position.set(0.3, -1.3, 0);
+  gltf.scene.scale.set(0.2, 0.2, 0.2);
+
+  /* get the animation and re-declare mixer and action.
   // which will then be triggered on button press
   mixer = new THREE.AnimationMixer(gltf.scene);
   action = mixer.clipAction(gltf.animations[0]);
 
+
   // Now the model has been loaded, we can roate it and add it to our image_tracker_group
-  imageTrackerGroup.add(gltf.scene.rotateX(Math.PI / 2));
+  imageTrackerGroup.add(gltf.scene);
 }, undefined, () => {
   console.log('An error ocurred loading the GLTF model');
 });
+*/
+
 
 // Light up our scene with an ambient light
 imageTrackerGroup.add(new THREE.AmbientLight(0xffffff));
