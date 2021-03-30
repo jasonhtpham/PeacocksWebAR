@@ -2,3 +2,5 @@ out
 lib
 node_modules
 dist
+webpack.config.js
+package-lock.json

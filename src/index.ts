@@ -8,7 +8,7 @@ import * as ZapparThree from '@zappar/zappar-threejs';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import model from '../assets/3.png';
-import target from '../assets/sample.zpt';
+import target from '../assets/test_label.zpt';
 import './index.sass';
 
 // The SDK is supported on many different browsers, but there are some that
@@ -79,28 +79,58 @@ scene.add(imageTrackerGroup);
 let action: THREE.AnimationAction;
 let mixer: THREE.AnimationMixer;
 
-var loader = new THREE.TextureLoader();
+// let hexagonShape = new THREE.Shape();
+var hexagonShape = new THREE.Shape();
+hexagonShape.moveTo( -0.6, -0.8 );
+hexagonShape.lineTo( -0.6, 0.8 );
+hexagonShape.lineTo( 0, -1 );
+
+hexagonShape.moveTo( -0.6, 0.8 );
+hexagonShape.lineTo( 0, 1 );
+
+hexagonShape.moveTo( 0, 1 );
+hexagonShape.lineTo( 0.6, 0.8 );
+
+hexagonShape.moveTo( 0.6, 0.8 );
+hexagonShape.lineTo( 0.6, -0.8 );
+
+hexagonShape.moveTo( 0.6, -0.8 );
+hexagonShape.lineTo( 0, -1 );
+
+let mainGeometry = new THREE.ShapeGeometry(hexagonShape);
+
+const mainMaterial = new THREE.MeshBasicMaterial({ color: '#2d2626' });
+
+// combine our image geometry and material into a mesh
+let mainMesh = new THREE.Mesh(mainGeometry, mainMaterial);
+
+// set the position of the image mesh in the x,y,z dimensions
+mainMesh.position.set(0, 0, 0);
+
+// add the image to the scene
+// scene.add(mesh);
+
+imageTrackerGroup.add(mainMesh);
+
+// Construct another mesh for the decoration
+let loader = new THREE.TextureLoader();
 
 // Load an image file into a custom material
-var material = new THREE.MeshLambertMaterial({
-  map: 
-  loader.load('https://s3.amazonaws.com/duhaime/blog/tsne-webgl/assets/cat.jpg'),
-  transparent:true
+let flowerMaterial = new THREE.MeshLambertMaterial({
+  map:
+  // loader.load('https://s3.amazonaws.com/duhaime/blog/tsne-webgl/assets/cat.jpg'),
+  loader.load(model),
+  transparent: true,
 });
 
 // create a plane geometry for the image with a width of 10
 // and a height that preserves the image's aspect ratio
-var geometry = new THREE.PlaneGeometry(1, 1*.75);
+let flowerGeometry = new THREE.PlaneGeometry(1, 1 * 0.75);
 
-// combine our image geometry and material into a mesh
-var mesh = new THREE.Mesh(geometry, material);
+const flowerMesh = new THREE.Mesh( flowerGeometry, flowerMaterial );
+flowerMesh.position.set(0, 1.2, 0);
 
-// set the position of the image mesh in the x,y,z dimensions
-mesh.position.set(0,0,0)
-
-// add the image to the scene
-//scene.add(mesh);
-imageTrackerGroup.add(mesh);
+imageTrackerGroup.add(flowerMesh);
 
 
 /*
@@ -113,7 +143,7 @@ gltfLoader.load(model, (gltf) => {
   gltf.scene.position.set(0.3, -1.3, 0);
   gltf.scene.scale.set(0.2, 0.2, 0.2);
 
-  /* get the animation and re-declare mixer and action.
+  // get the animation and re-declare mixer and action.
   // which will then be triggered on button press
   mixer = new THREE.AnimationMixer(gltf.scene);
   action = mixer.clipAction(gltf.animations[0]);
@@ -138,8 +168,6 @@ button.onclick = () => { action.play(); };
 
 // Append the button to our document's body
 document.body.appendChild(button);
-
-
 
 // When we lose sight of the camera, hide the scene contents.
 imageTracker.onVisible.bind(() => { scene.visible = true; });
