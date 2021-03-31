@@ -6,8 +6,9 @@
 
 import * as ZapparThree from '@zappar/zappar-threejs';
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import model from '../assets/3.png';
+import videoSource from '../assets/martinivideoplayback.mp4';
 import target from '../assets/test_label.zpt';
 import './index.sass';
 
@@ -76,11 +77,32 @@ scene.add(imageTrackerGroup);
 // Since we're using webpack, we can use the 'file-loader' to make sure these assets are
 // automatically included in our output folder
 
-let action: THREE.AnimationAction;
+// let action: THREE.AnimationAction;
 let mixer: THREE.AnimationMixer;
 
+// Construct another mesh for the decoration
+let loader = new THREE.TextureLoader();
+
+// Load an image file into a custom material
+let flowerMaterial = new THREE.MeshLambertMaterial({
+  map:
+  // loader.load('https://s3.amazonaws.com/duhaime/blog/tsne-webgl/assets/cat.jpg'),
+  loader.load(model),
+  transparent: true,
+});
+
+// create a plane geometry for the image with a width of 10
+// and a height that preserves the image's aspect ratio
+let flowerGeometry = new THREE.PlaneGeometry(1, 1 * 0.75);
+
+const flowerMesh = new THREE.Mesh(flowerGeometry, flowerMaterial);
+flowerMesh.position.set(0, 1.2, -0.1);
+
+imageTrackerGroup.add(flowerMesh);
+
+// Build a plane with similar shape with the label to become a main mesh
 // let hexagonShape = new THREE.Shape();
-var hexagonShape = new THREE.Shape();
+let hexagonShape = new THREE.Shape();
 hexagonShape.moveTo( -0.6, -0.8 );
 hexagonShape.lineTo( -0.6, 0.8 );
 hexagonShape.lineTo( 0, -1 );
@@ -112,26 +134,55 @@ mainMesh.position.set(0, 0, 0);
 
 imageTrackerGroup.add(mainMesh);
 
-// Construct another mesh for the decoration
-let loader = new THREE.TextureLoader();
+// Video player
+const video = document.createElement('video');
+video.src = videoSource;
+
+video.load();
+
+// make your video canvas
+const videocanvas = document.createElement('canvas');
+videocanvas.id = ('videoCanvas');
+// set its size
+videocanvas.width = 1280;
+videocanvas.height = 720;
+
+const videocanvasctx = videocanvas.getContext('2d');
+
+// draw a black rectangle so that your spheres don't start out transparent
+if (videocanvasctx !== null) {
+  videocanvasctx.fillStyle = '#000000';
+  videocanvasctx.fillRect(0, 0, 1280, 720);
+}
+
+const texture = new THREE.Texture(videocanvas);
 
 // Load an image file into a custom material
-let flowerMaterial = new THREE.MeshLambertMaterial({
+const videoMaterial = new THREE.MeshLambertMaterial({
   map:
-  // loader.load('https://s3.amazonaws.com/duhaime/blog/tsne-webgl/assets/cat.jpg'),
-  loader.load(model),
-  transparent: true,
+    texture,
+    side: THREE.FrontSide,
+    toneMapped: false,
 });
 
 // create a plane geometry for the image with a width of 10
 // and a height that preserves the image's aspect ratio
-let flowerGeometry = new THREE.PlaneGeometry(1, 1 * 0.75);
+const videoGeometry = new THREE.PlaneGeometry(1, 0.75);
 
-const flowerMesh = new THREE.Mesh( flowerGeometry, flowerMaterial );
-flowerMesh.position.set(0, 1.2, 0);
+const videoMesh = new THREE.Mesh(videoGeometry, videoMaterial);
+videoMesh.position.set(0, 0, 0.1);
 
-imageTrackerGroup.add(flowerMesh);
+imageTrackerGroup.add(videoMesh);
 
+// Create a new div element on the document
+const videoButton = document.createElement('div');
+
+videoButton.setAttribute('class', 'circle');
+
+// On click, play the gltf's action
+videoButton.onclick = () => { video.play(); };
+
+document.body.appendChild(videoButton);
 
 /*
 //GLB files
@@ -158,6 +209,7 @@ gltfLoader.load(model, (gltf) => {
 
 imageTrackerGroup.add(new THREE.AmbientLight(0xffffff));
 
+/*
 // Create a new div element on the document
 const button = document.createElement('div');
 
@@ -168,10 +220,16 @@ button.onclick = () => { action.play(); };
 
 // Append the button to our document's body
 document.body.appendChild(button);
+*/
 
 // When we lose sight of the camera, hide the scene contents.
-imageTracker.onVisible.bind(() => { scene.visible = true; });
-imageTracker.onNotVisible.bind(() => { scene.visible = false; });
+imageTracker.onVisible.bind(() => {
+  scene.visible = true;
+});
+imageTracker.onNotVisible.bind(() => {
+  scene.visible = false;
+  video.pause();
+});
 
 // Used to get deltaTime for our animations.
 const clock = new THREE.Clock();
@@ -184,11 +242,21 @@ function render(): void {
   // The Zappar camera must have updateFrame called every frame
   camera.updateFrame(renderer);
 
+  // check for vid data
+  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    // draw video to canvas starting from upper left corner
+    if (videocanvasctx !== null) {
+      videocanvasctx.drawImage(video, 0, 0);
+    }
+    // tell texture object it needs to be updated
+    texture.needsUpdate = true;
+  }
+
   // Draw the ThreeJS scene in the usual way, but using the Zappar camera
   renderer.render(scene, camera);
 
   // Call render() again next frame
-  requestAnimationFrame(render);
+  window.requestAnimationFrame(render);
 }
 
 // Start things off
