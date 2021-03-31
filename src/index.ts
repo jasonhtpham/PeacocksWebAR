@@ -7,8 +7,12 @@
 import * as ZapparThree from '@zappar/zappar-threejs';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import model from '../assets/3.png';
+import flowers from '../assets/bottom.png';
+import flowerRight from '../assets/FlowerCorner.png';
+import flowerLeft from '../assets/FlowerCorner.png';
+import card from '../assets/CardGin.png';
 import target from '../assets/sample.zpt';
+import glass from '../assets/MartiniGlass.glb';
 import './index.sass';
 
 // The SDK is supported on many different browsers, but there are some that
@@ -82,52 +86,139 @@ let mixer: THREE.AnimationMixer;
 var loader = new THREE.TextureLoader();
 
 // Load an image file into a custom material
-var material = new THREE.MeshLambertMaterial({
+var materialBottom = new THREE.MeshLambertMaterial({
   map: 
-  loader.load('https://s3.amazonaws.com/duhaime/blog/tsne-webgl/assets/cat.jpg'),
+  loader.load(flowers),
   transparent:true
 });
 
 // create a plane geometry for the image with a width of 10
 // and a height that preserves the image's aspect ratio
-var geometry = new THREE.PlaneGeometry(1, 1*.75);
+var geometryBottom = new THREE.PlaneGeometry(0.8, 0.8);
 
 // combine our image geometry and material into a mesh
-var mesh = new THREE.Mesh(geometry, material);
+var meshBottom = new THREE.Mesh(geometryBottom, materialBottom);
 
 // set the position of the image mesh in the x,y,z dimensions
-mesh.position.set(0,0,-1)
+meshBottom.position.set(0,-1,0)
 
 // add the image to the scene
-scene.add(mesh);
-//imageTrackerGroup.add(mesh.scene);
+//scene.add(mesh);
+imageTrackerGroup.add(meshBottom);
+
+//right side flower
+// Load an image file into a custom material
+var materialRight = new THREE.MeshLambertMaterial({
+  map: 
+  loader.load(flowerRight),
+  transparent:true
+});
+
+// create a plane geometry for the image with a width of 10
+// and a height that preserves the image's aspect ratio
+var geometryRight = new THREE.PlaneGeometry(0.8, 0.8);
+
+// combine our image geometry and material into a mesh
+var meshRight = new THREE.Mesh(geometryRight, materialRight);
+
+// set the position of the image mesh in the x,y,z dimensions
+meshRight.position.set(0.6,0,0)
+
+// add the image to the scene
+imageTrackerGroup.add(meshRight);
+
+//right side flower
+// Load an image file into a custom material
+var materialLeft = new THREE.MeshLambertMaterial({
+  map: 
+  loader.load(flowerLeft),
+  transparent:true
+});
+
+// create a plane geometry for the image with a width of 10
+// and a height that preserves the image's aspect ratio
+var geometryLeft = new THREE.PlaneGeometry(0.8, 0.8);
+
+// combine our image geometry and material into a mesh
+var meshLeft = new THREE.Mesh(geometryLeft, materialLeft);
+
+// set the position of the image mesh in the x,y,z dimensions
+meshLeft.position.set(-0.6,0,0)
+
+// add the image to the scene
+imageTrackerGroup.add(meshLeft);
 
 
+//card
+// Load an image file into a custom material
+var materialCard = new THREE.MeshLambertMaterial({
+  map: 
+  loader.load(card),
+  transparent:true
+});
+
+// create a plane geometry for the image with a width of 10
+// and a height that preserves the image's aspect ratio
+var geometryCard = new THREE.PlaneGeometry(2.3, 2.4);
+
+// combine our image geometry and material into a mesh
+var meshCard = new THREE.Mesh(geometryCard, materialCard);
+
+// set the position of the image mesh in the x,y,z dimensions
+meshCard.position.set(-2.0,-2,0)
+meshCard.rotation.set(0,0.7,0)
+
+// add the image to the scene
+//scene.add(mesh);
+imageTrackerGroup.add(meshCard);
 /*
-//GLB files
+//Glass
+// Load an image file into a custom material
+var materialGlass = new THREE.MeshLambertMaterial({
+  map: 
+  loader.load(glass),
+  transparent:true
+});
+
+// create a plane geometry for the image with a width of 10
+// and a height that preserves the image's aspect ratio
+var geometryGlass = new THREE.PlaneGeometry(1.5, 1.5);
+
+// combine our image geometry and material into a mesh
+var meshGlass = new THREE.Mesh(geometryGlass, materialGlass);
+
+// set the position of the image mesh in the x,y,z dimensions
+meshGlass.position.set(2.0,-1.5,0)
+meshGlass.rotation.set(0,-0.7,0)
+
+// add the image to the scene
+//scene.add(mesh);
+imageTrackerGroup.add(meshGlass);
+
+
+*/
+
+//Glass3dModel
 // Load a 3D model to place within our group (using ThreeJS's GLTF loader)
 const gltfLoader = new GLTFLoader(manager);
-gltfLoader.load(model, (gltf) => {
-
+gltfLoader.load(glass, (gltf) => {
   // Position the loaded content to overlay user's face
-  gltf.scene.position.set(0.3, -1.3, 0);
-  gltf.scene.scale.set(0.2, 0.2, 0.2);
-
+  gltf.scene.position.set(2.0,-2,0);
+  gltf.scene.scale.set(2,2,2);
+  gltf.scene.rotation.set(0,-0.7,0)
+  
   /* get the animation and re-declare mixer and action.
   // which will then be triggered on button press
   mixer = new THREE.AnimationMixer(gltf.scene);
   action = mixer.clipAction(gltf.animations[0]);
-
-
+  
+  */
   // Now the model has been loaded, we can roate it and add it to our image_tracker_group
   imageTrackerGroup.add(gltf.scene);
 }, undefined, () => {
   console.log('An error ocurred loading the GLTF model');
 });
-*/
 
-
-// Light up our scene with an ambient light
 imageTrackerGroup.add(new THREE.AmbientLight(0xffffff));
 
 // Create a new div element on the document
@@ -140,6 +231,8 @@ button.onclick = () => { action.play(); };
 
 // Append the button to our document's body
 document.body.appendChild(button);
+
+
 
 // When we lose sight of the camera, hide the scene contents.
 imageTracker.onVisible.bind(() => { scene.visible = true; });
