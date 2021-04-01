@@ -86,8 +86,8 @@ let loader = new THREE.TextureLoader();
 // Load an image file into a custom material
 let flowerMaterial = new THREE.MeshLambertMaterial({
   map:
-  // loader.load('https://s3.amazonaws.com/duhaime/blog/tsne-webgl/assets/cat.jpg'),
-  loader.load(model),
+    // loader.load('https://s3.amazonaws.com/duhaime/blog/tsne-webgl/assets/cat.jpg'),
+    loader.load(model),
   transparent: true,
 });
 
@@ -103,21 +103,21 @@ imageTrackerGroup.add(flowerMesh);
 // Build a plane with similar shape with the label to become a main mesh
 // let hexagonShape = new THREE.Shape();
 let hexagonShape = new THREE.Shape();
-hexagonShape.moveTo( -0.6, -0.8 );
-hexagonShape.lineTo( -0.6, 0.8 );
-hexagonShape.lineTo( 0, -1 );
+hexagonShape.moveTo(-0.6, -0.8);
+hexagonShape.lineTo(-0.6, 0.8);
+hexagonShape.lineTo(0, -1);
 
-hexagonShape.moveTo( -0.6, 0.8 );
-hexagonShape.lineTo( 0, 1 );
+hexagonShape.moveTo(-0.6, 0.8);
+hexagonShape.lineTo(0, 1);
 
-hexagonShape.moveTo( 0, 1 );
-hexagonShape.lineTo( 0.6, 0.8 );
+hexagonShape.moveTo(0, 1);
+hexagonShape.lineTo(0.6, 0.8);
 
-hexagonShape.moveTo( 0.6, 0.8 );
-hexagonShape.lineTo( 0.6, -0.8 );
+hexagonShape.moveTo(0.6, 0.8);
+hexagonShape.lineTo(0.6, -0.8);
 
-hexagonShape.moveTo( 0.6, -0.8 );
-hexagonShape.lineTo( 0, -1 );
+hexagonShape.moveTo(0.6, -0.8);
+hexagonShape.lineTo(0, -1);
 
 let mainGeometry = new THREE.ShapeGeometry(hexagonShape);
 
@@ -161,8 +161,8 @@ const texture = new THREE.Texture(videocanvas);
 const videoMaterial = new THREE.MeshLambertMaterial({
   map:
     texture,
-    side: THREE.FrontSide,
-    toneMapped: false,
+  side: THREE.FrontSide,
+  toneMapped: false,
 });
 
 // create a plane geometry for the image with a width of 10
