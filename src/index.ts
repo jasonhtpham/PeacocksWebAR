@@ -8,6 +8,9 @@ import * as ZapparThree from '@zappar/zappar-threejs';
 import * as THREE from 'three';
 // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import model from '../assets/3.png';
+import flower1 from '../assets/flower1.png';
+import flower2 from '../assets/flower2.png';
+import flower3 from '../assets/flower3.png';
 import videoSource from '../assets/martinivideoplayback.mp4';
 import target from '../assets/test_label.zpt';
 import './index.sass';
@@ -175,6 +178,55 @@ const videoMesh = new THREE.Mesh(videoGeometry, videoMaterial);
 videoMesh.position.set(0, 0, 0.1);
 
 imageTrackerGroup.add(videoMesh);
+
+
+
+
+
+// Low position flower decoration
+
+// Flower number ONE (the left one)
+const lowFlower1Material = new THREE.MeshLambertMaterial({
+  map:
+    loader.load(flower1),
+  transparent: true,
+});
+const lowFlower1Geometry = new THREE.PlaneGeometry(1, 1);
+
+const lowFlower1Mesh = new THREE.Mesh(lowFlower1Geometry, lowFlower1Material);
+lowFlower1Mesh.position.set(-0.6, -0.8, 0.1);
+
+// Flower number TWO (the middle one)
+const lowFlower2Material = new THREE.MeshLambertMaterial({
+  map:
+    loader.load(flower2),
+  transparent: true,
+});
+const lowFlower2Geometry = new THREE.PlaneGeometry(1, 1);
+
+const lowFlower2Mesh = new THREE.Mesh(lowFlower2Geometry, lowFlower2Material);
+lowFlower2Mesh.position.set(0, -1, 0.2);
+
+// Flower number THREE (the right one)
+
+const lowFlower3Material = new THREE.MeshLambertMaterial({
+  map:
+    loader.load(flower3),
+  transparent: true,
+});
+const lowFlower3Geometry = new THREE.PlaneGeometry(1, 1);
+
+const lowFlower3Mesh = new THREE.Mesh(lowFlower3Geometry, lowFlower3Material);
+lowFlower3Mesh.position.set(0.6, -0.8, 0.1);
+
+imageTrackerGroup.add(lowFlower1Mesh);
+imageTrackerGroup.add(lowFlower3Mesh);
+imageTrackerGroup.add(lowFlower2Mesh);
+
+
+
+
+
 
 // Create a button for video playing control
 const videoButton = document.createElement('button');
