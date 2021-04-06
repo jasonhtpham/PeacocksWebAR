@@ -117,13 +117,13 @@ hexagonShape.lineTo(0, -1);
 
 const mainGeometry = new THREE.ShapeGeometry(hexagonShape);
 
-const mainMaterial = new THREE.MeshBasicMaterial({ color: '#2d2626' });
+const mainMaterial = new THREE.MeshBasicMaterial({ color: '#d5cef0' });
 
 // combine our image geometry and material into a mesh
 const mainMesh = new THREE.Mesh(mainGeometry, mainMaterial);
 
 // set the position of the image mesh in the x,y,z dimensions
-mainMesh.position.set(0, 0, 0);
+mainMesh.position.set(0, 0, 0.01);
 
 // add the image to the scene
 // scene.add(mesh);
@@ -173,7 +173,7 @@ const videoGeometry = new THREE.PlaneGeometry(1, 0.75);
 
 // Put material and the plane together to have a mesh
 const videoMesh = new THREE.Mesh(videoGeometry, videoMaterial);
-videoMesh.position.set(0, 0, 0.1);
+videoMesh.position.set(0, 0, 0.2);
 
 imageTrackerGroup.add(videoMesh);
 
@@ -188,7 +188,7 @@ var geometryBottom = new THREE.PlaneGeometry(0.8, 0.8);
 var meshBottom = new THREE.Mesh(geometryBottom, materialBottom);
 
 // set the position of the image mesh in the x,y,z dimensions
-meshBottom.position.set(0,-1,0)
+meshBottom.position.set(0,-1,0.1)
 
 // add the image to the scene
 //scene.add(mesh);
@@ -210,7 +210,7 @@ var geometryRight = new THREE.PlaneGeometry(0.8, 0.8);
 var meshRight = new THREE.Mesh(geometryRight, materialRight);
 
 // set the position of the image mesh in the x,y,z dimensions
-meshRight.position.set(0.6,0,0)
+meshRight.position.set(0.6,0,0.1)
 
 // add the image to the scene
 imageTrackerGroup.add(meshRight);
@@ -231,7 +231,7 @@ var geometryLeft = new THREE.PlaneGeometry(0.8, 0.8);
 var meshLeft = new THREE.Mesh(geometryLeft, materialLeft);
 
 // set the position of the image mesh in the x,y,z dimensions
-meshLeft.position.set(-0.6,0,0)
+meshLeft.position.set(-0.6,0,0.1)
 
 // add the image to the scene
 imageTrackerGroup.add(meshLeft);
@@ -253,8 +253,8 @@ var geometryCard = new THREE.PlaneGeometry(2.3, 2.4);
 var meshCard = new THREE.Mesh(geometryCard, materialCard);
 
 // set the position of the image mesh in the x,y,z dimensions
-meshCard.position.set(-2.0,-2,0)
-meshCard.rotation.set(0,0.7,0)
+meshCard.position.set(-2.0,-2,0.1)
+meshCard.rotation.set(0,0.7,0.1)
 
 // add the image to the scene
 //scene.add(mesh);
@@ -291,7 +291,7 @@ imageTrackerGroup.add(meshGlass);
 const gltfLoader = new GLTFLoader(manager);
 gltfLoader.load(glass, (gltf) => {
   // Position the loaded content to overlay user's face
-  gltf.scene.position.set(2.0,-2,0);
+  gltf.scene.position.set(2.0,-2,0.1);
   gltf.scene.scale.set(2,2,2);
   gltf.scene.rotation.set(0,-0.7,0)
 
@@ -369,7 +369,7 @@ function render(): void {
   if (video.readyState === video.HAVE_ENOUGH_DATA) {
     // draw video to canvas starting from upper left corner
     if (videoCanvasCtx !== null) {
-      videoCanvasCtx.drawImage(video, 0, 0);
+      videoCanvasCtx.drawImage(video, 0, 0.2);
     }
     // tell texture object it needs to be updated
     texture.needsUpdate = true;
