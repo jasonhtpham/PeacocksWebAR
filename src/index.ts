@@ -14,6 +14,7 @@ import card from '../assets/CardGin.png';
 import target from '../assets/sample.zpt';
 import glass from '../assets/MartiniGlass.glb';
 import './index.sass';
+import { MeshPhongMaterial } from 'three';
 
 // The SDK is supported on many different browsers, but there are some that
 // don't provide camera access. This function detects if the browser is supported
@@ -206,6 +207,8 @@ gltfLoader.load(glass, (gltf) => {
   gltf.scene.position.set(2.0,-2,0);
   gltf.scene.scale.set(2,2,2);
   gltf.scene.rotation.set(0,-0.7,0)
+
+
   
   /* get the animation and re-declare mixer and action.
   // which will then be triggered on button press
@@ -219,7 +222,11 @@ gltfLoader.load(glass, (gltf) => {
   console.log('An error ocurred loading the GLTF model');
 });
 
-imageTrackerGroup.add(new THREE.AmbientLight(0xffffff));
+
+imageTrackerGroup.add(new THREE.DirectionalLight(0xffffff,10));
+
+imageTrackerGroup.add(new THREE.AmbientLight(0xffffff,1));
+
 
 // Create a new div element on the document
 const button = document.createElement('div');
@@ -240,6 +247,8 @@ imageTracker.onNotVisible.bind(() => { scene.visible = false; });
 
 // Used to get deltaTime for our animations.
 const clock = new THREE.Clock();
+
+
 
 // Use a function to render our scene as usual
 function render(): void {
