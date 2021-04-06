@@ -13,6 +13,9 @@ import flowerLeft from '../assets/FlowerCorner.png';
 import card from '../assets/CardGin.png';
 import target from '../assets/sample.zpt';
 import glass from '../assets/MartiniGlass.glb';
+import videoSource from '../assets/martinivideoplayback.mp4';
+
+
 import './index.sass';
 import { MeshPhongMaterial } from 'three';
 
@@ -92,6 +95,90 @@ var materialBottom = new THREE.MeshLambertMaterial({
   loader.load(flowers),
   transparent:true
 });
+
+
+// Build a plane with similar shape with the label to become a main mesh
+const hexagonShape = new THREE.Shape();
+hexagonShape.moveTo(-0.6, -0.8);
+hexagonShape.lineTo(-0.6, 0.8);
+hexagonShape.lineTo(0, -1);
+
+hexagonShape.moveTo(-0.6, 0.8);
+hexagonShape.lineTo(0, 1);
+
+hexagonShape.moveTo(0, 1);
+hexagonShape.lineTo(0.6, 0.8);
+
+hexagonShape.moveTo(0.6, 0.8);
+hexagonShape.lineTo(0.6, -0.8);
+
+hexagonShape.moveTo(0.6, -0.8);
+hexagonShape.lineTo(0, -1);
+
+const mainGeometry = new THREE.ShapeGeometry(hexagonShape);
+
+const mainMaterial = new THREE.MeshBasicMaterial({ color: '#2d2626' });
+
+// combine our image geometry and material into a mesh
+const mainMesh = new THREE.Mesh(mainGeometry, mainMaterial);
+
+// set the position of the image mesh in the x,y,z dimensions
+mainMesh.position.set(0, 0, 0);
+
+// add the image to the scene
+// scene.add(mesh);
+
+imageTrackerGroup.add(mainMesh);
+
+
+
+
+// Video player
+// Create a video element with local mp4/obv file.
+const video = document.createElement('video');
+video.src = videoSource;
+
+// load video
+video.load();
+
+// make your video canvas
+const videoCanvas = document.createElement('canvas');
+videoCanvas.id = ('videoCanvas');
+// set its size
+videoCanvas.width = 1280;
+videoCanvas.height = 720;
+
+// Provide videoCanvas with 2d context
+const videoCanvasCtx = videoCanvas.getContext('2d');
+
+// draw a black rectangle so that the canvas don't start out transparent
+if (videoCanvasCtx !== null) {
+  videoCanvasCtx.fillStyle = '#000000';
+  videoCanvasCtx.fillRect(0, 0, 1280, 720);
+}
+
+// Use canvas as the texture
+const texture = new THREE.Texture(videoCanvas);
+
+// configure the material for the mesh
+const videoMaterial = new THREE.MeshLambertMaterial({
+  map:
+    texture,
+  side: THREE.FrontSide,
+  toneMapped: false,
+});
+
+// create a plane geometry for the video
+const videoGeometry = new THREE.PlaneGeometry(1, 0.75);
+
+// Put material and the plane together to have a mesh
+const videoMesh = new THREE.Mesh(videoGeometry, videoMaterial);
+videoMesh.position.set(0, 0, 0.1);
+
+imageTrackerGroup.add(videoMesh);
+
+
+
 
 // create a plane geometry for the image with a width of 10
 // and a height that preserves the image's aspect ratio
@@ -239,12 +326,31 @@ button.onclick = () => { action.play(); };
 // Append the button to our document's body
 document.body.appendChild(button);
 
+// Create a button for video playing control
+const videoButton = document.createElement('button');
+videoButton.disabled = true;
 
+videoButton.setAttribute('class', 'circle');
+
+document.body.appendChild(videoButton);
+
+// On click, play the video
+videoButton.onclick = () => {
+  video.play();
+};
 
 // When we lose sight of the camera, hide the scene contents.
-imageTracker.onVisible.bind(() => { scene.visible = true; });
-imageTracker.onNotVisible.bind(() => { scene.visible = false; });
-
+// When we lose sight of the camera, hide the scene contents.
+// Also, disable play button and pause video
+imageTracker.onVisible.bind(() => {
+  scene.visible = true;
+  videoButton.disabled = false;
+});
+imageTracker.onNotVisible.bind(() => {
+  scene.visible = false;
+  videoButton.disabled = true;
+  video.pause();
+});
 // Used to get deltaTime for our animations.
 const clock = new THREE.Clock();
 
@@ -257,6 +363,17 @@ function render(): void {
 
   // The Zappar camera must have updateFrame called every frame
   camera.updateFrame(renderer);
+
+
+  // check for vid data
+  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    // draw video to canvas starting from upper left corner
+    if (videoCanvasCtx !== null) {
+      videoCanvasCtx.drawImage(video, 0, 0);
+    }
+    // tell texture object it needs to be updated
+    texture.needsUpdate = true;
+  }
 
   // Draw the ThreeJS scene in the usual way, but using the Zappar camera
   renderer.render(scene, camera);
