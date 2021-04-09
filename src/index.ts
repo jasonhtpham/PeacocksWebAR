@@ -11,7 +11,7 @@ import flowers from '../assets/bottom.png';
 import flowerRight from '../assets/FlowerCorner.png';
 import flowerLeft from '../assets/FlowerCorner.png';
 import card from '../assets/CardGin.png';
-import target from '../assets/sample.zpt';
+import target from '../assets/LabelToUse.zpt';
 import glass from '../assets/MartiniGlass.glb';
 import videoSource from '../assets/martinivideoplayback.mp4';
 
