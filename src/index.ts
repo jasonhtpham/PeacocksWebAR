@@ -11,7 +11,7 @@ import flowers from '../assets/bottom.png';
 import flowerRight from '../assets/FlowerCorner.png';
 import flowerLeft from '../assets/FlowerCorner.png';
 import card from '../assets/CardGin.png';
-import target from '../assets/LabelToUse.zpt';
+import target from '../assets/label.zpt';
 import glass from '../assets/MartiniGlass.glb';
 import videoSource from '../assets/martinivideoplayback.mp4';
 
@@ -33,7 +33,7 @@ if (ZapparThree.browserIncompatible()) {
   // so we throw an exception here.
   throw new Error('Unsupported browser');
 }
-
+let model: THREE.Object3D;
 // ZapparThree provides a LoadingManager that shows a progress bar while
 // the assets are downloaded. You can use this if it's helpful, or use
 // your own loading UI - it's up to you :-)
@@ -212,6 +212,23 @@ var meshRight = new THREE.Mesh(geometryRight, materialRight);
 // set the position of the image mesh in the x,y,z dimensions
 meshRight.position.set(0.6,0,0.1)
 
+// Used to get deltaTime for our animations.
+const clock = new THREE.Clock();
+
+//meshRight.scale.set(1,1,1)
+/*
+for (int i=0;)    
+if (t >= 3.0)
+{
+  meshRight.scale.set(0,0,0);
+}
+else
+{
+  meshRight.scale.x = 1+(t/3.0);
+  meshRight.scale.y = 1+(t/3.0);
+  meshRight.scale.z = 1+(t/3.0);   
+}
+*/
 // add the image to the scene
 imageTrackerGroup.add(meshRight);
 
@@ -253,7 +270,7 @@ var geometryCard = new THREE.PlaneGeometry(2.3, 2.4);
 var meshCard = new THREE.Mesh(geometryCard, materialCard);
 
 // set the position of the image mesh in the x,y,z dimensions
-meshCard.position.set(-2.0,-2,0.1)
+meshCard.position.set(-1.9,-1.3,0.1)
 meshCard.rotation.set(0,0.7,0.1)
 
 // add the image to the scene
@@ -290,12 +307,13 @@ imageTrackerGroup.add(meshGlass);
 // Load a 3D model to place within our group (using ThreeJS's GLTF loader)
 const gltfLoader = new GLTFLoader(manager);
 gltfLoader.load(glass, (gltf) => {
+  model = gltf.scene;
   // Position the loaded content to overlay user's face
-  gltf.scene.position.set(2.0,-2,0.1);
-  gltf.scene.scale.set(2,2,2);
-  gltf.scene.rotation.set(0,-0.7,0)
+  model.position.set(1.6,-1,0.5);
+  model.scale.set(13,13,13);
+  model.rotation.set(0,-0.7,0);
 
-
+  
   
   /* get the animation and re-declare mixer and action.
   // which will then be triggered on button press
@@ -304,7 +322,7 @@ gltfLoader.load(glass, (gltf) => {
   
   */
   // Now the model has been loaded, we can roate it and add it to our image_tracker_group
-  imageTrackerGroup.add(gltf.scene);
+  imageTrackerGroup.add(model);
 }, undefined, () => {
   console.log('An error ocurred loading the GLTF model');
 });
@@ -340,7 +358,6 @@ videoButton.onclick = () => {
 };
 
 // When we lose sight of the camera, hide the scene contents.
-// When we lose sight of the camera, hide the scene contents.
 // Also, disable play button and pause video
 imageTracker.onVisible.bind(() => {
   scene.visible = true;
@@ -351,9 +368,6 @@ imageTracker.onNotVisible.bind(() => {
   videoButton.disabled = true;
   video.pause();
 });
-// Used to get deltaTime for our animations.
-const clock = new THREE.Clock();
-
 
 
 // Use a function to render our scene as usual
@@ -374,12 +388,15 @@ function render(): void {
     // tell texture object it needs to be updated
     texture.needsUpdate = true;
   }
+    //meshCard.rotation.y += 0.01;
 
   // Draw the ThreeJS scene in the usual way, but using the Zappar camera
   renderer.render(scene, camera);
 
   // Call render() again next frame
   requestAnimationFrame(render);
+  //gltfLoader.rotation.y += Math.PI / 180
+
 }
 
 // Start things off

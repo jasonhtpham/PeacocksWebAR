@@ -26,7 +26,7 @@ module.exports = {
     contentBase: './dist/',
     historyApiFallback: true,
     https: true,
-    host: '192.168.57.221',
+    host: '10.141.51.109',
     hot: true,
     open: true,
   },
