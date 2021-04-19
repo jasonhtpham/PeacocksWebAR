@@ -213,22 +213,8 @@ var meshRight = new THREE.Mesh(geometryRight, materialRight);
 meshRight.position.set(0.6,0,0.1)
 
 // Used to get deltaTime for our animations.
-const clock = new THREE.Clock();
+var clock = new THREE.Clock();
 
-//meshRight.scale.set(1,1,1)
-/*
-for (int i=0;)    
-if (t >= 3.0)
-{
-  meshRight.scale.set(0,0,0);
-}
-else
-{
-  meshRight.scale.x = 1+(t/3.0);
-  meshRight.scale.y = 1+(t/3.0);
-  meshRight.scale.z = 1+(t/3.0);   
-}
-*/
 // add the image to the scene
 imageTrackerGroup.add(meshRight);
 
@@ -270,38 +256,13 @@ var geometryCard = new THREE.PlaneGeometry(2.3, 2.4);
 var meshCard = new THREE.Mesh(geometryCard, materialCard);
 
 // set the position of the image mesh in the x,y,z dimensions
-meshCard.position.set(-1.9,-1.3,0.1)
-meshCard.rotation.set(0,0.7,0.1)
+meshCard.position.set(0.3,-2.2,0)
+meshCard.rotation.set(-0.5,0,0)
+meshCard.scale.set(1,1,1)
 
 // add the image to the scene
 //scene.add(mesh);
 imageTrackerGroup.add(meshCard);
-/*
-//Glass
-// Load an image file into a custom material
-var materialGlass = new THREE.MeshLambertMaterial({
-  map: 
-  loader.load(glass),
-  transparent:true
-});
-
-// create a plane geometry for the image with a width of 10
-// and a height that preserves the image's aspect ratio
-var geometryGlass = new THREE.PlaneGeometry(1.5, 1.5);
-
-// combine our image geometry and material into a mesh
-var meshGlass = new THREE.Mesh(geometryGlass, materialGlass);
-
-// set the position of the image mesh in the x,y,z dimensions
-meshGlass.position.set(2.0,-1.5,0)
-meshGlass.rotation.set(0,-0.7,0)
-
-// add the image to the scene
-//scene.add(mesh);
-imageTrackerGroup.add(meshGlass);
-
-
-*/
 
 //Glass3dModel
 // Load a 3D model to place within our group (using ThreeJS's GLTF loader)
@@ -369,6 +330,22 @@ imageTracker.onNotVisible.bind(() => {
   video.pause();
 });
 
+//particles effect
+/*
+var material = new THREE.PointCloudMaterial({
+  color: 0xffffcc
+});
+var pointCloud = new THREE.PointCloud(geometry, material);
+scene.add(pointCloud);
+*/
+
+function animate() {
+
+  requestAnimationFrame(animate);
+ render();
+}
+//Variable to stop scaling
+let stopScaler = 0;
 
 // Use a function to render our scene as usual
 function render(): void {
@@ -388,16 +365,40 @@ function render(): void {
     // tell texture object it needs to be updated
     texture.needsUpdate = true;
   }
-    //meshCard.rotation.y += 0.01;
 
+//rotating 3d model of cocktail glass
+  model.rotation.y +=0.05;
+ 
+ var t = clock.getElapsedTime();
+ 
+//Rotating left and Right flowers
+meshRight.rotation.z += 0.01;
+meshLeft.rotation.z += 0.01;
+
+//Dynamic scaling of flowers 
+  if (t >= 3.0) {
+    if(stopScaler == 0){
+      clock = new THREE.Clock;
+      meshRight.scale.set(0, 0, 0);
+      meshLeft.scale.set(0, 0, 0);
+      meshBottom.scale.set(0, 0, 0);    
+  }
+  stopScaler=1;
+ } 
+else {
+  meshRight.scale.x = (t * 0.3);
+  meshRight.scale.y = (t * 0.3);
+  meshRight.scale.z = (t);
+  meshLeft.scale.x = (t * 0.3);
+  meshLeft.scale.y = (t * 0.3);
+  meshLeft.scale.z = (t);
+  meshBottom.scale.x = (t * 0.3);
+  meshBottom.scale.y = (t * 0.3);
+  meshBottom.scale.z = (t);
+ }
   // Draw the ThreeJS scene in the usual way, but using the Zappar camera
   renderer.render(scene, camera);
-
-  // Call render() again next frame
-  requestAnimationFrame(render);
-  //gltfLoader.rotation.y += Math.PI / 180
-
 }
 
 // Start things off
-render();
+animate();
